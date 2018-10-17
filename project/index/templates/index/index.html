@@ -1,0 +1,31 @@
+{% extends 'project/base.html' %}
+{% load static %}
+{% block styles %}<link rel="stylesheet" type="text/css" href="{% static 'index/style.css'%}" /> {% endblock %}
+{% block content %}
+<!--typer-->
+<div class="app">
+    <h1>Manage your time  <vue-typer
+                        :text='["effectively.","wisely.","productively.","intelligently.","rationally.","well.","with Morello."]'
+                        :repeat='0'
+                        :shuffle='false'
+                        initial-action='typing'
+                        :pre-type-delay='80'
+                        :type-delay='80'
+                        :pre-erase-delay='1000'
+                        :erase-delay='80'
+                        erase-style='backspace'
+                        :erase-on-complete='false'
+                        caret-animation='blink'
+                        ></vue-typer>
+                </h1>
+    <p>Let's start manage your time!</p>
+    <a href="{% url 'board:list_of_board' %}">
+        <button class="button3"><span>Continue</span>
+        </button>
+    </a>
+    <p id="special">with love to</p>
+    <a href="https://www.python.org/" target="_blank"><img class="img-fluid" draggable="false" src="{% static '/index/images/python_logo.svg' %}" alt="Python">
+    </a>
+</div>{% endblock %}
+{% block scripts %}<script type="text/javascript" src="{% static 'index/cdn/vue-typer.min.js'%}"></script>
+    <script type="text/javascript" src="{% static 'index/script.js'%}"></script>{% endblock %}

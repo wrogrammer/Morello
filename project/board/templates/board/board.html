@@ -1,0 +1,93 @@
+{% extends 'project/base.html' %}
+{% load static %}
+{% block styles %}<link rel="stylesheet" type="text/css" href="{% static 'board/cdn/vfg.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'board/style.css'%}" />{% endblock %}
+{% block content %}
+<!--tableWithRecords-->
+<div id="tab" class="table table-responsive">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th class="text-center">Title</th>
+                <th class="text-center">Description</th>
+                <th class="text-center">Category</th>
+                <th class="text-center">Date</th>
+                <th class="text-center">Time</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>{% for boards in board %}
+            <tr>
+                <td><a data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Create new card" class="new-tooltip" href="{{ boards.get_absolute_url }}">{{ boards.title }}</a>
+                </td>
+                <td>{{ boards.description }}</td>
+                <td>{{ boards.category }}</td>
+                <td>{{ boards.created_at}}</td>
+                <td>{{ boards.created_at_time }}</td>
+                <td class="catch">
+                    <a data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Change order" class="new-tooltip"><img src="{% static '/board/images/list_png.png'%}" alt="list_icon">
+                    </a>
+                </td>
+                <td>
+                    <a id="delete" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Delete board" class="new-tooltip" href="{% url 'board:delete_board' slug=boards.slug board_id=boards.pk %}"><img src="{% static '/board/images/delete_png.png'%}" alt="delete_icon">
+                    </a>
+                </td>
+            </tr>{% endfor %}
+        </tbody>
+    </table>
+</div>
+<p>Don't waste your time and ...</p>
+<div id="button">
+    <button class="button2" :class="{ 'active': active }" @click="clicked">
+        <% active ? clickedText : buttonText %>
+    </button>
+</div>
+<!--tableCreate-->
+<div id="form" class="container py-5">
+    <div class="panel panel-default">
+        <div class="panel-heading">Create table:</div>
+        <div class="panel-body">
+            <form method="post">
+                {% csrf_token %}
+                <vue-form :state="formstate" v-model="formstate" v-on:submit.prevent="onSubmit">
+                    <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.title)">
+                        <label>Title:</label>
+                        <input type="title" name="title" class="form-control" required v-model.lazy="model.title" minlength="5" maxlength="15" id="title">
+                        <field-messages name="title" show="$touched || $submitted" class="form-control-feedback">
+                            <div>Success!</div>
+                            <div slot="required">Title is a required field.</div>
+                            <div slot="minlength">Enter least 5 characters.</div>
+                        </field-messages>
+                    </validate>
+                    <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.description)">
+                        <label>Description:</label>
+                        <input type="description" name="description" class="form-control" required v-model.lazy="model.description" minlength="5" maxlength="25" id="description">
+                        <field-messages name="description" show="$touched || $submitted" class="form-control-feedback">
+                            <div>Success!</div>
+                            <div slot="required">Description is a required field.</div>
+                            <div slot="minlength">Enter least 5 characters.</div>
+                        </field-messages>
+                    </validate>
+                    <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.category)">
+                        <label>Category:</label>
+                        <input type="category" name="category" class="form-control" required v-model.lazy="model.category" minlength="5" maxlength="25" id="category">
+                        <field-messages name="category" show="$touched || $submitted" class="form-control-feedback">
+                            <div>Success!</div>
+                            <div slot="required">Category is a required field.</div>
+                            <div slot="minlength">Enter least 5 characters.</div>
+                        </field-messages>
+                    </validate>
+                    <div class="py-2 text-center">
+                        <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                    </div>
+                </vue-form>
+            </form>
+        </div>
+    </div>
+</div>{% endblock %}
+{% block scripts %}<script type="text/javascript" src="{% static 'board/cdn/vfg.js' %}"></script>
+    <script type="text/javascript" src="{% static 'board/cdn/vue-form.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'board/form.js'%}"></script>
+    <script type="text/javascript" src="{% static 'board/empty.js'%}"></script>
+    <script type="text/javascript" src="{% static 'board/script.js'%}"></script>{% endblock %}

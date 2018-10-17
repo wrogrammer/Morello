@@ -1,0 +1,74 @@
+{% extends 'project/base.html' %}
+{% load static %}
+{% block styles %}<link rel="stylesheet" type="text/css" href="/static/board/cdn/vfg.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'board/style_card.css'%}" />{% endblock %}
+{% block content %}
+<p><a href="{% url 'board:list_of_board' %}" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Comeback to board list" class="new-tooltip">{{board.title}}</a></p>
+<div class="flex-container">{% for i in board.card_set.all %}
+    <div class="card {{i.colors}} flex-item">
+        <ul class="nav nav-pills nav-fill">
+            <li class="nav-item">
+                <a data-toggle="tooltip" data-placement="top" title="" data-original-title="Change order" class="nav-link new-tooltip"><img class="move" src="{% static '/board/images/list_png.png'%}" alt="list_icon">
+                </a>
+            </li>
+            <li class="nav-item">
+                <a id="delete" href="{% url 'board:delete_card' board.slug board.pk i.id %}" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete card" class="del nav-link new-tooltip"><img src="{% static '/board/images/delete_png.png'%}" alt="delete_icon">
+                </a>
+            </li>
+        </ul>
+        <h2>{{i.title_card}}</h2>
+        <h3>{{i.description_card}}</h3>
+        <div id="footer">
+            <a class="pointer" data-toggle="collapse" data-target="#{{i.pk}}" aria-controls="{{i.pk}}">Change status</a>
+            <div id="{{i.pk}}" class="collapse hide" aria-labelledby="headingOne">
+                <div class="card-block">
+                    <a id="success" href="{% url 'board:success_button' board.slug board.pk i.id %}">
+                        <button type="button" class="btn btn-outline-success touch">Done!</button>
+                    </a>
+                    <a id="warning" href="{% url 'board:warning_button' board.slug board.pk i.id %}">
+                        <button type="button" class="btn btn-outline-warning touch">In progress</button>
+                    </a>
+                    <a id="danger" href="{% url 'board:danger_button' board.slug board.pk i.id %}">
+                        <button type="button" class="btn btn-outline-danger touch">Canceled</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>{% endfor %}
+</div>
+<div id="form" class="container py-5">
+    <div class="panel panel-default">
+        <div class="panel-heading">Create card:</div>
+        <div class="panel-body">
+            <form>
+                {% csrf_token %}
+                <vue-form :state="formstate" v-model="formstate" v-on:submit.prevent="onSubmit">
+                    <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.title_card)">
+                        <label>Title:</label>
+                        <input type="title_card" name="title_card" class="form-control" required v-model.lazy="model.title_card" minlength="5" maxlength="15" id="title_card">
+                        <field-messages name="title_card" show="$touched || $submitted" class="form-control-feedback">
+                            <div>Success!</div>
+                            <div slot="required">Title is a required field.</div>
+                            <div slot="minlength">Enter least 5 characters.</div>
+                        </field-messages>
+                    </validate>
+                    <validate auto-label class="form-group required-field" :class="fieldClassName(formstate.description_card)">
+                        <label>Description:</label>
+                        <input type="description" name="description_card" class="form-control" required v-model.lazy="model.description_card" minlength="5" maxlength="15" id="description_card">
+                        <field-messages name="description_card" show="$touched || $submitted" class="form-control-feedback">
+                            <div>Success!</div>
+                            <div slot="required">Description is a required field.</div>
+                            <div slot="minlength">Enter least 5 characters.</div>
+                        </field-messages>
+                    </validate>
+                    <div class="py-2 text-center">
+                        <button type="submit" class="btn btn-primary" value="submit">Submit</button>
+                    </div>
+                </vue-form>
+            </form>
+        </div>
+    </div>
+</div>{% endblock %}
+{% block scripts %}<script type="text/javascript" src="{% static 'board/cards.js'%}"></script>
+    <script type="text/javascript" src="{% static 'board/cdn/vue-form.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'board/form_cards.js' %}"></script>{% endblock %}
